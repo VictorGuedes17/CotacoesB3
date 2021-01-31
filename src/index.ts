@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer';
+import { Cotation } from './cotation'
 
 const pappers = [
   "viavarejo-vvar3",
@@ -16,39 +16,4 @@ const pappers = [
   "Accenture plc-ACN"
 ]
 
-async function getPrice(papper: string) {
-  const browser = await puppeteer.launch({
-    // headless: false
-  });
-  const page = await browser.newPage();
-  const URL = `https://www.infomoney.com.br/cotacoes/${papper}`
-  await page.goto(URL)
-  console.log("URL: ", URL)
-  const result = await page.evaluate(() => {
-    try {
-      if (document.getElementsByClassName("line-info")[0]) {
-        const value = document.getElementsByClassName("line-info")[0].getElementsByClassName("value")[0].getElementsByTagName("p")[0].textContent;
-        const currentPrice = value ? value : ""
-        return currentPrice
-      } else {
-        return ""
-      }
-    } catch (e) {
-      console.log("deu erro : ", e)
-      return ""
-    }
-  });
-
-  if (result) {
-    page.close();
-    return result;
-  }
-}
-
-(async function main() {
-  for (const papper of pappers) {
-    const currentPrice = await getPrice(papper);
-    const papperName = papper.split("-")[1];
-    console.log(`Papel: ${papperName} - Cotação Atual : ${currentPrice}`)
-  }
-})()
+Cotation.main(pappers);
